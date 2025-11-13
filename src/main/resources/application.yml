@@ -1,0 +1,7 @@
+quarkus:
+  http:
+    port: 8081
+  rest-client:
+    user-data-api:
+      url: ${USER_DATA_API_URL:http://localhost:8080}
+      disable-default-mapper: true
