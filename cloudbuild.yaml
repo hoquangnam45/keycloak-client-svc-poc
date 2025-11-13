@@ -7,9 +7,12 @@ substitutions:
 steps:
   # Step 1: Build Docker image using final JAR
   - name: 'gcr.io/cloud-builders/docker'
+    env:
+      - 'DOCKER_BUILDKIT=1'
     args:
       [
         'build',
+        '-f', './src/main/docker/Dockerfile.native-micro',
         '-t', '${_IMAGE_NAME}',
         '.'
       ]
@@ -27,11 +30,14 @@ steps:
         '--image', '${_IMAGE_NAME}',
         '--region', '${_REGION}',
         '--platform', 'managed',
-        '--ingress', 'internal-and-cloud-load-balancing', # Allow traffic only from the LB
-        '--set-env-vars', 'USER_DATA_API_URL=https://keycloak-resource-svc-poc-164981609739.${_REGION}.run.app',
+        '--ingress', 'all',
+        '--set-env-vars', 'USER_DATA_API_URL=http://10.148.0.2',
         '--port', '8081',
         '--allow-unauthenticated',
         '--project', '${_PROJECT}',
+        '--network', 'default',
+        '--subnet', 'default',
+        '--vpc-egress', 'private-ranges-only',
         '--min-instances', '1',
         '--max-instances', '1'
       ]
