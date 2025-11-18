@@ -6,12 +6,12 @@ quarkus:
       url: ${USER_DATA_API_URL:http://localhost:8080}
       disable-default-mapper: true
   oidc-client:
-    auth-server-url: http://34.142.154.181/realms/master
+    auth-server-url: http://34.142.154.181/realms/david-test-realm
     user-data-api:
       client-id: keycloak-client-svc-poc-client
-      auth-server-url: http://34.142.154.181/realms/master
+      auth-server-url: http://34.142.154.181/realms/david-test-realm
       credentials:
-        secret: Oo3GRfAOVPczovy0JUmtR5dli3hyjh1l
+        secret: 443ayFouSSvXkvavB6bZHkyh38Fw9D5p
       grant:
         type: client
   log:
