@@ -65,6 +65,10 @@
             <artifactId>lombok</artifactId>
             <version>1.18.40</version>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-oidc-filter</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

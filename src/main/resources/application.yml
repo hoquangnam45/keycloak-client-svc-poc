@@ -5,3 +5,27 @@ quarkus:
     user-data-api:
       url: ${USER_DATA_API_URL:http://localhost:8080}
       disable-default-mapper: true
+  oidc-client:
+    auth-server-url: http://34.142.154.181/realms/master
+    user-data-api:
+      client-id: keycloak-client-svc-poc-client
+      auth-server-url: http://34.142.154.181/realms/master
+      credentials:
+        secret: Oo3GRfAOVPczovy0JUmtR5dli3hyjh1l
+      grant:
+        type: client
+  log:
+    category:
+      # Enable detailed OIDC logging
+      "io.quarkus.oidc":
+        level: DEBUG
+      "io.quarkus.oidc.runtime":
+        level: TRACE
+
+      # Show HTTP client requests to Keycloak
+      "io.vertx.ext.web.client":
+        level: DEBUG
+
+      # Show token validation details
+      "io.quarkus.oidc.runtime.OidcProvider":
+        level: DEBUG
