@@ -13,7 +13,7 @@ import jakarta.ws.rs.QueryParam;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 
-@Path("/api/client/user")
+@Path("/api/client/users")
 public class UserResource {
     private final UserClient userClient;
 

@@ -1,8 +1,17 @@
 substitutions:
-  _SERVICE_NAME: keycloak-client-svc-poc
+  _SERVICE_NAME: client-service
   _REGION: asia-southeast1
   _PROJECT: active-bolt-478008-c9
-  _IMAGE_NAME: asia-southeast1-docker.pkg.dev/${_PROJECT}/cdc-keycloak-poc/keycloak-client-svc-poc:latest
+  _IMAGE_NAME: asia-southeast1-docker.pkg.dev/${_PROJECT}/cdc-keycloak-poc/client-service:latest
+  _KEYCLOAK_AUTH_SERVER_URL: http://34.142.154.181/realms/poc-keycloak
+  _KEYCLOAK_CLIENT_ID: poc-keycloak-client-service
+  _RESOURCE_SERVICE_URL: https://resource-service-164981609739.asia-southeast1.run.app
+
+# Secret Manager configuration for Keycloak client secret
+availableSecrets:
+  secretManager:
+    - versionName: projects/${_PROJECT}/secrets/keycloak-client-secret/versions/latest
+      env: 'KEYCLOAK_CLIENT_SECRET'
 
 steps:
   # Step 1: Build Docker image using final JAR
@@ -17,13 +26,14 @@ steps:
         '.'
       ]
 
-  # Step 3: Push Docker image to Artifact Registry
+  # Step 2: Push Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '${_IMAGE_NAME}']
 
-  # Step 4: Deploy to Cloud Run
+  # Step 3: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
+    secretEnv: ['KEYCLOAK_CLIENT_SECRET']
     args:
       [
         'run', 'deploy', '${_SERVICE_NAME}',
@@ -31,7 +41,8 @@ steps:
         '--region', '${_REGION}',
         '--platform', 'managed',
         '--ingress', 'all',
-        '--set-env-vars', 'USER_DATA_API_URL=http://10.148.0.2',
+        '--update-secrets', 'KEYCLOAK_CLIENT_SECRET=keycloak-client-secret:latest',
+        '--set-env-vars', 'USER_DATA_API_URL=${_RESOURCE_SERVICE_URL},KEYCLOAK_AUTH_SERVER_URL=${_KEYCLOAK_AUTH_SERVER_URL},KEYCLOAK_CLIENT_ID=${_KEYCLOAK_CLIENT_ID}',
         '--port', '8081',
         '--allow-unauthenticated',
         '--project', '${_PROJECT}',
@@ -46,5 +57,5 @@ images:
   - '${_IMAGE_NAME}'
 
 options:
-  logging: CLOUD_LOGGING_ONLY   # This avoids the log bucket error
+  logging: CLOUD_LOGGING_ONLY
   dynamicSubstitutions: true

@@ -18,7 +18,7 @@ import org.jboss.resteasy.reactive.RestResponse;
 @Path("/api/users")
 @RegisterRestClient(configKey = "user-data-api")
 @OidcClientFilter("user-data-api")
-@RegisterProvider(TokenLoggingFilter.class)  // Add this
+@RegisterProvider(TokenLoggingFilter.class)
 public interface UserClient {
     @GET
     RestResponse<Object> getUser(@QueryParam("id") String id, @QueryParam("username") String username);

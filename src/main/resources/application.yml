@@ -3,15 +3,15 @@ quarkus:
     port: 8081
   rest-client:
     user-data-api:
-      url: ${USER_DATA_API_URL:http://localhost:8080}
+      url: ${USER_DATA_API_URL}
       disable-default-mapper: true
   oidc-client:
-    auth-server-url: http://34.142.154.181/realms/david-test-realm
+    auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
     user-data-api:
-      client-id: keycloak-client-svc-poc-client
-      auth-server-url: http://34.142.154.181/realms/david-test-realm
+      client-id: ${KEYCLOAK_CLIENT_ID}
+      auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL}
       credentials:
-        secret: 443ayFouSSvXkvavB6bZHkyh38Fw9D5p
+        secret: ${KEYCLOAK_CLIENT_SECRET}
       grant:
         type: client
   log:
