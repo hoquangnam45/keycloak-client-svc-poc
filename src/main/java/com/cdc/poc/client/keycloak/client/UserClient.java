@@ -15,7 +15,7 @@ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.jboss.resteasy.reactive.RestResponse;
 
-@Path("/api/data/user")
+@Path("/api/users")
 @RegisterRestClient(configKey = "user-data-api")
 @OidcClientFilter("user-data-api")
 @RegisterProvider(TokenLoggingFilter.class)  // Add this
