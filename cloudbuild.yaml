@@ -1,11 +1,14 @@
 substitutions:
   _SERVICE_NAME: client-service
+  _NEW_SERVICE_NAME: new-client-service
   _REGION: asia-southeast1
   _PROJECT: active-bolt-478008-c9
   _IMAGE_NAME: asia-southeast1-docker.pkg.dev/${_PROJECT}/cdc-keycloak-poc/client-service:latest
   _KEYCLOAK_AUTH_SERVER_URL: http://34.142.154.181/realms/poc-keycloak
   _KEYCLOAK_CLIENT_ID: poc-keycloak-client-service
   _RESOURCE_SERVICE_URL: https://resource-service-164981609739.asia-southeast1.run.app
+  _NEW_KEYCLOAK_AUTH_SERVER_URL: http://35.240.191.5/realms/poc-keycloak-new
+  _NEW_KEYCLOAK_CLIENT_ID: new-poc-keycloak-client-service
 
 # Secret Manager configuration for Keycloak client secret
 availableSecrets:
@@ -43,6 +46,29 @@ steps:
         '--ingress', 'all',
         '--update-secrets', 'KEYCLOAK_CLIENT_SECRET=keycloak-client-secret:latest',
         '--set-env-vars', 'USER_DATA_API_URL=${_RESOURCE_SERVICE_URL},KEYCLOAK_AUTH_SERVER_URL=${_KEYCLOAK_AUTH_SERVER_URL},KEYCLOAK_CLIENT_ID=${_KEYCLOAK_CLIENT_ID}',
+        '--port', '8081',
+        '--allow-unauthenticated',
+        '--project', '${_PROJECT}',
+        '--network', 'default',
+        '--subnet', 'default',
+        '--vpc-egress', 'private-ranges-only',
+        '--min-instances', '1',
+        '--max-instances', '1'
+      ]
+
+  # Step 4: Deploy new client to Cloud Run (Authenticate with new keycloak)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    secretEnv: ['KEYCLOAK_CLIENT_SECRET']
+    args:
+      [
+        'run', 'deploy', '${_NEW_SERVICE_NAME}',
+        '--image', '${_IMAGE_NAME}',
+        '--region', '${_REGION}',
+        '--platform', 'managed',
+        '--ingress', 'all',
+        '--update-secrets', 'KEYCLOAK_CLIENT_SECRET=keycloak-client-secret-new:latest',
+        '--set-env-vars', 'USER_DATA_API_URL=${_RESOURCE_SERVICE_URL},KEYCLOAK_AUTH_SERVER_URL=${_NEW_KEYCLOAK_AUTH_SERVER_URL},KEYCLOAK_CLIENT_ID=${_NEW_KEYCLOAK_CLIENT_ID}',
         '--port', '8081',
         '--allow-unauthenticated',
         '--project', '${_PROJECT}',
